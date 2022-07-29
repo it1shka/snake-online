@@ -1,0 +1,18 @@
+.offline-content-wrapper {
+  height: 100vh;
+  display: grid;
+  place-items: center;
+  
+  .inner-wrapper {
+    background-color: white;
+    border-radius: 15px;
+    box-shadow: #63e8ff 0px 0px 3px;
+    padding: 2em;
+
+    .info-panel {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-around;
+    }
+  }
+}

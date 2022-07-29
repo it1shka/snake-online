@@ -1,0 +1,1 @@
+alert('You are in online mode!')
