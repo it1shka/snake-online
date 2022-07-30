@@ -12,6 +12,37 @@
   <base href=".">
   <script defer type="module" src="/assets/online.js"></script>
 
-  <h1>Online mode!</h1>
+  <div class="start-game-panel-wrapper">
+    <div class="start-game-panel">
+
+      <div>
+        <h2>Online game mode</h2>
+        <p>Play with your friends together!</p>
+      </div>
+
+      <input id="player-name-input" placeholder="Enter your name: ">
+
+      <form id="connect-room-form">
+        <h2>Connect to a room:</h2>
+        <input required placeholder="Room ID: ">
+        <button>Connect</button>
+      </form>
+
+      <form id="create-room-form">
+        <h2>Create new room: </h2>
+        <p>Max room players (min 1, max 10):</p>
+        <input required
+          type="number" 
+          step="1"
+          min="1"
+          max="10"  
+          placeholder="Amount: "
+        >
+        <button>Create</button>
+      </form>
+    </div>
+  </div>
+
+  
 </body>
 </html>

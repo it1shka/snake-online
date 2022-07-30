@@ -1,6 +1,7 @@
 package api
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 	"time"
@@ -25,6 +26,7 @@ func roomConnectHandler(ctx *gin.Context) {
 
 	room := ctx.MustGet("room").(*Room)
 
+	// locking room to connect a player
 	room.Lock()
 
 	playerName := ctx.DefaultQuery("name", "unknown")
@@ -35,18 +37,18 @@ func roomConnectHandler(ctx *gin.Context) {
 	room.Unlock()
 
 	defer func() {
+		// locking room to cleanup a player
 		room.Lock()
-		defer room.Unlock()
 
 		room.Players.Delete(conn)
 		room.CurrentPlayers--
 
-		if room.CurrentPlayers <= 0 {
-			rooms.Delete(room.Id)
-		}
+		room.Unlock()
+
 		conn.Close()
 	}()
 
+	// loop until exit in order to get player messages
 	handlePlayer(player)
 }
 
@@ -57,8 +59,8 @@ func handlePlayer(player *Player) {
 			break
 		}
 
-		// store the direction of a user
-		println(message)
+		// RESPONCE TO A MESSAGE GOES HERE
+		fmt.Printf("Got message from player %s: %s\n", player.Name, message)
 	}
 }
 
@@ -71,33 +73,40 @@ func createRoomHandler(ctx *gin.Context) {
 	}
 	room := NewRoom(roomId, maxPlayers)
 	rooms.Set(roomId, room)
+	roomCleanupLoop(roomId)
 	roomUpdateLoop(roomId)
 	ctx.String(http.StatusCreated, roomId)
 }
 
-func roomUpdateLoop(roomId string) {
-	ticker := time.NewTicker(time.Second / 5)
-	quit := make(chan struct{})
-	go func() {
-		for {
-			select {
-			case <-ticker.C:
-				maybeRoom := rooms.Get(roomId)
-				if maybeRoom == nil {
-					close(quit)
-				}
-				updateRoom(maybeRoom)
-			case <-quit:
-				ticker.Stop()
-				return
-			}
+func roomCleanupLoop(roomId string) {
+	setInterval(time.Minute*5, func(quit chan struct{}) {
+		room := rooms.Get(roomId)
+		room.RLock()
+		defer room.RUnlock()
+
+		if room.CurrentPlayers == 0 {
+			rooms.Delete(roomId)
+			close(quit)
+			// fmt.Printf("Room %s disposed\n", roomId)
 		}
-	}()
+	})
+}
+
+func roomUpdateLoop(roomId string) {
+	setInterval(time.Second/5, func(quit chan struct{}) {
+		maybeRoom := rooms.Get(roomId)
+		if maybeRoom == nil {
+			close(quit)
+			return
+		}
+		updateRoom(maybeRoom)
+	})
 }
 
 func updateRoom(room *Room) {
 	room.Lock()
 	defer room.Unlock()
 
-	// update the room
+	// UPDATE THE ROOM -- MAIN LOGIC GOES HERE
+	fmt.Printf("Room %s is updated!\n", room.Id)
 }

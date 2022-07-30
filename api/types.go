@@ -18,7 +18,7 @@ const (
 type Position [2]int
 
 type Player struct {
-	// maybe i should add a mutex here ...
+	sync.RWMutex
 	Conn      *websocket.Conn
 	Name      string
 	Direction Direction

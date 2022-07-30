@@ -30,3 +30,21 @@ func (sm *SafeMap[K, V]) Delete(key K) {
 	defer sm.Unlock()
 	delete(sm.m, key)
 }
+
+func (sm *SafeMap[K, V]) Iterate(fn func(key K, value V)) {
+	sm.Lock()
+	defer sm.Unlock()
+
+	for key, value := range sm.m {
+		fn(key, value)
+	}
+}
+
+func (sm *SafeMap[K, V]) ReadonlyIterate(fn func(key K, value V)) {
+	sm.RLock()
+	defer sm.RUnlock()
+
+	for key, value := range sm.m {
+		fn(key, value)
+	}
+}
