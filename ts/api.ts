@@ -1,13 +1,14 @@
-export default class ApiInterface {
+import { resolveSocket } from "./utils.js"
+
+class ApiInterface {
 
   constructor(
     private readonly baseUrl: string
   ) {}
 
-
   public async createRoom(maxPlayers: number): Promise<string> {
     const url = new URL('/api/room/create', this.baseUrl)
-    url.searchParams.append("maxplayers", String(maxPlayers))
+    url.searchParams.append('maxplayers', String(maxPlayers))
     const href = url.href
 
     console.log(`Creating room: ${href}`)
@@ -17,4 +18,16 @@ export default class ApiInterface {
     
     return data
   }
+
+  public connectToRoom(roomId: string, selfname: string): Promise<WebSocket> {
+    const url = new URL(`/api/room/${roomId}/connect`, this.baseUrl.replace('http', 'ws'))
+    url.searchParams.append('name', selfname)
+
+    console.log('Connecting to room: ' + url.href)
+
+    const connection = new WebSocket(url)
+    return resolveSocket(connection)
+  }
 }
+
+export default new ApiInterface('http://localhost:3000')

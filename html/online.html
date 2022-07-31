@@ -24,7 +24,7 @@
 
       <form id="connect-room-form">
         <h2>Connect to a room:</h2>
-        <input required placeholder="Room ID: ">
+        <input id="connect-input" required placeholder="Room ID: ">
         <button>Connect</button>
       </form>
 
@@ -32,6 +32,8 @@
         <h2>Create new room: </h2>
         <p>Max room players (min 1, max 10):</p>
         <input required
+          id="create-input"
+          value="4"
           type="number" 
           step="1"
           min="1"

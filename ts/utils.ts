@@ -20,3 +20,23 @@ export function getRandomName(): string {
   const name = `${prefix}Player${postfix}`
   return name
 }
+
+export function resolveSocket(socket: WebSocket): Promise<WebSocket> {
+  return new Promise((resolve, reject) => {
+
+    const onerror = () => {
+      socket.close()
+      reject('WebSocket error')
+    }
+
+    const onopen = () => {
+      socket.removeEventListener('error', onerror)
+      socket.removeEventListener('open', onopen)
+      resolve(socket)
+    }
+
+    socket.addEventListener('error', onerror)
+    socket.addEventListener('open', onopen)
+
+  })
+}

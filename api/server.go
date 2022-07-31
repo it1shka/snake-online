@@ -15,6 +15,10 @@ func SetupAPIServer(router *gin.RouterGroup) {
 	roomGroup.GET("/:id/connect", roomGuard(), roomConnectHandler)
 }
 
+// middleware applied to /:id/connect in order to check:
+// 1) if the room doesnt exist -- StatusNotFound;
+// 2) if the room is full -- StatsForbidden;
+// otherwise places room inside *gin.Context
 func roomGuard() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		roomId := ctx.Param("id")
@@ -28,13 +32,15 @@ func roomGuard() gin.HandlerFunc {
 
 		room.RLock()
 
-		if room.CurrentPlayers+1 > room.MaxPlayers {
+		current, max := room.CurrentPlayers, room.MaxPlayers
+
+		room.RUnlock()
+
+		if current+1 > max {
 			ctx.String(http.StatusForbidden, "room is full")
 			ctx.Abort()
 			return
 		}
-
-		room.RUnlock()
 
 		ctx.Set("room", room)
 		ctx.Next()

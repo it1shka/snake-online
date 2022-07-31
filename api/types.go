@@ -2,6 +2,7 @@ package api
 
 import (
 	"sync"
+	"time"
 
 	"github.com/gorilla/websocket"
 )
@@ -39,15 +40,17 @@ type Room struct {
 	sync.RWMutex
 	Id                         string
 	MaxPlayers, CurrentPlayers int
+	LastActivityTime           time.Time
 	Players                    *SafeMap[*websocket.Conn, *Player]
 }
 
 func NewRoom(id string, maxplayers int) *Room {
 	room := Room{
-		Id:             id,
-		MaxPlayers:     maxplayers,
-		CurrentPlayers: 0,
-		Players:        NewSafeMap[*websocket.Conn, *Player](),
+		Id:               id,
+		MaxPlayers:       maxplayers,
+		CurrentPlayers:   0,
+		LastActivityTime: time.Now(),
+		Players:          NewSafeMap[*websocket.Conn, *Player](),
 	}
 	return &room
 }

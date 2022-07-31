@@ -26,22 +26,25 @@ func roomConnectHandler(ctx *gin.Context) {
 
 	room := ctx.MustGet("room").(*Room)
 
-	// locking room to connect a player
 	room.Lock()
 
 	playerName := ctx.DefaultQuery("name", "unknown")
 	player := NewPlayer(conn, playerName)
 	room.Players.Set(conn, player)
 	room.CurrentPlayers++
+	room.LastActivityTime = time.Now()
 
 	room.Unlock()
 
 	defer func() {
-		// locking room to cleanup a player
 		room.Lock()
 
 		room.Players.Delete(conn)
 		room.CurrentPlayers--
+		room.LastActivityTime = time.Now()
+		if room.CurrentPlayers == 0 {
+			disposeRoomIfEmpty(room.Id)
+		}
 
 		room.Unlock()
 
@@ -53,6 +56,8 @@ func roomConnectHandler(ctx *gin.Context) {
 }
 
 func handlePlayer(player *Player) {
+	fmt.Printf("Player %s connected!\n", player.Name)
+
 	for {
 		mt, message, err := player.Conn.ReadMessage()
 		if err != nil || mt == websocket.CloseMessage {
@@ -71,24 +76,30 @@ func createRoomHandler(ctx *gin.Context) {
 	if err != nil {
 		maxPlayers = 10
 	}
+
 	room := NewRoom(roomId, maxPlayers)
 	rooms.Set(roomId, room)
-	roomCleanupLoop(roomId)
 	roomUpdateLoop(roomId)
+	disposeRoomIfEmpty(roomId)
+
 	ctx.String(http.StatusCreated, roomId)
 }
 
-func roomCleanupLoop(roomId string) {
-	setInterval(time.Minute*5, func(quit chan struct{}) {
+const DISPOSAL_TIME = time.Minute * 5
+
+func disposeRoomIfEmpty(roomId string) {
+	time.AfterFunc(DISPOSAL_TIME, func() {
 		room := rooms.Get(roomId)
 		room.RLock()
 		defer room.RUnlock()
 
-		if room.CurrentPlayers == 0 {
-			rooms.Delete(roomId)
-			close(quit)
-			// fmt.Printf("Room %s disposed\n", roomId)
+		elapsed := time.Since(room.LastActivityTime)
+		if elapsed < DISPOSAL_TIME {
+			return
 		}
+
+		rooms.Delete(roomId)
+		fmt.Printf("Room %s is disposed\n", roomId)
 	})
 }
 
