@@ -44,6 +44,8 @@ class OnlineSnakeManager {
 
   private unsubFromInput: () => void
   private selfPlayer: Player | undefined
+  private usertable: HTMLElement
+  private state!: GameState
 
   constructor(
     private readonly socket: WebSocket,
@@ -54,10 +56,13 @@ class OnlineSnakeManager {
     socket.onmessage = this.receiveUpdate
     this.responceToInput = this.responceToInput.bind(this)
     this.unsubFromInput = subscribeToInput(inpBind, this.responceToInput)
+    this.usertable = document.getElementById('usertable')!
   }
 
   private receiveUpdate(event: MessageEvent<any>) {
     const state = JSON.parse(event.data) as GameState
+    this.state = state
+    this.drawUsertable()
 
     this.selfPlayer = state.snakes.find(({self}) => self)
 
@@ -79,6 +84,23 @@ class OnlineSnakeManager {
     this.visualizer.drawFood(state.food)
   }
 
+  private drawUsertable() {
+    const list = this.usertable.querySelector('ol')!
+    while(list.lastChild) {
+      list.removeChild(list.lastChild)
+    }
+    const snakes = this.state.snakes.sort((s1, s2) => {
+      return s2.body.length - s1.body.length
+    })
+    for(const {name, body, self} of snakes) {
+      const li = document.createElement('li')
+      const you = self ? '<span class="you"> (YOU)</span>' : ''
+      li.innerHTML = `${name}${you}: <span>${body.length}</span>`
+      if(self) li.className = 'self'
+      list.appendChild(li)
+    }
+  }
+
   private responceToInput(direction: Direction) {
     if((this.selfPlayer?.body.length ?? 0) > 1 && (
       this.selfPlayer?.direction === direction ||
@@ -91,6 +113,7 @@ class OnlineSnakeManager {
   public cleanup() {
     this.socket.close()
     this.unsubFromInput()
+    this.visualizer.drawGrid()
   }
 }
 
@@ -104,10 +127,26 @@ export default function playOnline(socket: WebSocket) {
   // instancing main class
   const manager = new OnlineSnakeManager(socket, vizualizer, document.body)
 
+  const usertable = document.getElementById('usertable')!
+  const keydownListener = (event: KeyboardEvent) => {
+    if(event.key !== 'Tab') return
+    event.preventDefault()
+    usertable.style.display = 'grid'
+  }
+  document.body.addEventListener('keydown', keydownListener)
+  const keyupListener = (event: KeyboardEvent) => {
+    if(event.key !== 'Tab') return
+    event.preventDefault()
+    usertable.style.display = 'none'
+  }
+  document.body.addEventListener('keyup', keyupListener)
+
   // ability to quit room
   const quitButton = queryElement<HTMLButtonElement>('#quit-online')
   const quitHandler = () => {
     manager.cleanup()
+    document.body.removeEventListener('keydown', keydownListener)
+    document.body.removeEventListener('keyup', keyupListener)
     quitButton.removeEventListener('click', quitHandler)
   }
   quitButton.addEventListener('click', quitHandler)

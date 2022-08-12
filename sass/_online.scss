@@ -70,3 +70,34 @@
     background-color: #682a2a;
   }
 }
+
+.full-window-wrapper {
+  position: fixed;
+  top: 0; right: 0; bottom: 0; left: 0;
+  z-index: 98;
+  background-color: rgba(0, 0, 0, 0.411);
+  display: grid;
+  place-items: center;
+
+  .white-panel {
+    background-color: rgba(63, 63, 63, 0.74);
+    box-shadow: rgb(119, 119, 119) 0px 0px 5px;
+    color: white;
+    display: grid;
+    place-items: center;
+    border-radius: 15px;
+    max-width: 560px;
+    width: 100%;
+    max-height: 260px;
+    height: 100%;
+  }
+
+  ol {
+    color: white;
+    font-size: 1.5em;
+    li {color: #ececec}
+    span {color: #aeffae}
+    .self {color: white}
+    .you {color: #ffc8c8}
+  }
+}

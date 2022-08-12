@@ -50,7 +50,21 @@
   <div class="visualizer-wrapper">
     <div class="visualizer">
       <canvas tabindex="1" id="canvas" width="600" height="600"></canvas>
+      <div class="info-panel">
+        <h2>[Tab] -> Open Usertable</h2>
+      </div>
     </div>
+  </div>
+
+  <div class="full-window-wrapper" onclick="this.remove()">
+    <div class="white-panel">
+      <h1>WASD to start!</h1>
+      <h3>Click to hide</h3>
+    </div>
+  </div>
+
+  <div style="display: none" class="full-window-wrapper" id="usertable">
+    <ol></ol>
   </div>
 
   <button id="quit-online">
