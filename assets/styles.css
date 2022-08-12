@@ -1,0 +1,227 @@
+@import url("https://fonts.googleapis.com/css2?family=Permanent+Marker&display=swap");
+.index-page-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: 1em 2em;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+.index-page-header * + * {
+  margin-left: 0.25em;
+}
+.index-page-header img {
+  width: 50px;
+  height: auto;
+}
+
+.index-content-wrapper {
+  height: 100vh;
+  display: grid;
+  place-items: center;
+}
+.index-content-wrapper .info {
+  padding: 2em 3em;
+  background-color: white;
+  border-radius: 15px;
+  max-width: 600px;
+  box-shadow: #63e8ff 0px 0px 3px;
+}
+.index-content-wrapper .info > * + * {
+  margin-top: 0.8em;
+}
+.index-content-wrapper .info p {
+  color: grey;
+}
+.index-content-wrapper .info .links {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+}
+.index-content-wrapper .info .links a {
+  color: #338391;
+  text-decoration: none;
+}
+.index-content-wrapper .info .links a:hover {
+  text-decoration: underline;
+}
+
+.index-footer {
+  position: fixed;
+  bottom: 10px;
+  left: 15px;
+}
+.index-footer a {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+}
+.index-footer a img {
+  width: 30px;
+  height: auto;
+}
+.index-footer a p {
+  margin-left: 0.75em;
+  color: #338391;
+  font-size: 16px;
+}
+.index-footer a p:hover {
+  text-decoration: underline;
+}
+
+.visualizer-wrapper {
+  height: 100vh;
+  display: grid;
+  place-items: center;
+}
+.visualizer-wrapper .visualizer {
+  background-color: white;
+  border-radius: 15px;
+  box-shadow: #63e8ff 0px 0px 3px;
+  padding: 2em;
+}
+.visualizer-wrapper .visualizer .info-panel {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+}
+
+.start-game-panel-wrapper {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: #d6f9ff;
+  z-index: 99;
+  height: 100vh;
+  display: grid;
+  place-items: center;
+}
+.start-game-panel-wrapper .start-game-panel {
+  background-color: white;
+  border-radius: 15px;
+  box-shadow: #63e8ff 0px 0px 3px;
+  padding: 1em 2em;
+}
+.start-game-panel-wrapper .start-game-panel > * + * {
+  margin-top: 1em;
+}
+.start-game-panel-wrapper .start-game-panel p {
+  color: grey;
+}
+.start-game-panel-wrapper .start-game-panel input {
+  padding: 0.2em 0.5em;
+  font-size: inherit;
+  font-family: inherit;
+  color: #2fb0c7;
+}
+.start-game-panel-wrapper .start-game-panel button {
+  padding: 0.2em 0.5em;
+  border-radius: 7px;
+  border: none;
+  background-color: #bff5ff;
+  transition: 0.1s all;
+  transition-property: background-color, color;
+}
+.start-game-panel-wrapper .start-game-panel button:hover {
+  background-color: #2fb0c7;
+  color: white;
+}
+
+.start-game-panel-wrapper.invisible {
+  display: none;
+}
+
+#quit-online {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  padding: 0.5em 1em;
+  font-size: inherit;
+  background-color: #b84949;
+  color: white;
+  border: none;
+  border-radius: 15px;
+  box-shadow: transparent 0px 0px 3px;
+  transition: all 0.2s;
+  transition-property: background-color, box-shadow;
+}
+#quit-online:hover {
+  box-shadow: #682a2a 0px 0px 3px;
+  background-color: #682a2a;
+}
+
+.full-window-wrapper {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 98;
+  background-color: rgba(0, 0, 0, 0.411);
+  display: grid;
+  place-items: center;
+}
+.full-window-wrapper .white-panel {
+  background-color: rgba(63, 63, 63, 0.74);
+  box-shadow: rgb(119, 119, 119) 0px 0px 5px;
+  color: white;
+  display: grid;
+  place-items: center;
+  border-radius: 15px;
+  max-width: 560px;
+  width: 100%;
+  max-height: 260px;
+  height: 100%;
+}
+.full-window-wrapper ol {
+  color: white;
+  font-size: 1.5em;
+}
+.full-window-wrapper ol li {
+  color: #ececec;
+}
+.full-window-wrapper ol span {
+  color: #aeffae;
+}
+.full-window-wrapper ol .self {
+  color: white;
+}
+.full-window-wrapper ol .you {
+  color: #ffc8c8;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Permanent Marker", cursive;
+  color: #1a1a1a;
+  font-size: calc(1vw + 0.5em);
+  background-color: #d6f9ff;
+}
+@media (min-width: 30em) {
+  body {
+    font-size: 1em;
+  }
+}
+
+#home-link {
+  z-index: 100;
+  position: fixed;
+  top: 10px;
+  left: 10px;
+}
+#home-link img {
+  width: 50px;
+  height: auto;
+}
+
+/*# sourceMappingURL=styles.css.map */
