@@ -3,6 +3,7 @@ package main
 import (
 	"os"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"it1shka.com/snake-online/api"
 )
@@ -28,6 +29,7 @@ func main() {
 	router.Static("/assets", "./assets")
 
 	apiGroup := router.Group("/api")
+	apiGroup.Use(cors.Default())
 	api.SetupAPIServer(apiGroup)
 
 	PORT := os.Getenv("PORT")
