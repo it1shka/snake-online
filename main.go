@@ -1,6 +1,8 @@
 package main
 
 import (
+	"os"
+
 	"github.com/gin-gonic/gin"
 	"it1shka.com/snake-online/api"
 )
@@ -28,5 +30,9 @@ func main() {
 	apiGroup := router.Group("/api")
 	api.SetupAPIServer(apiGroup)
 
-	router.Run(":3000")
+	PORT := os.Getenv("PORT")
+	if PORT == "" {
+		PORT = "3000"
+	}
+	router.Run(":" + PORT)
 }
