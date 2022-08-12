@@ -40,3 +40,11 @@ export function resolveSocket(socket: WebSocket): Promise<WebSocket> {
 
   })
 }
+
+export function pairs<T>(arr: T[]): Array<[T, T]> {
+  const output = new Array(arr.length - 1)
+  for(let i = 0; i < arr.length - 1; i++) {
+    output[i] = [arr[i], arr[i + 1]]
+  }
+  return output
+}

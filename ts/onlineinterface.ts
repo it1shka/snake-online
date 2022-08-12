@@ -1,6 +1,6 @@
 import { getRandomName } from "./utils.js"
 
-function queryElement<T extends HTMLElement>(query: string): T {
+export function queryElement<T extends HTMLElement>(query: string): T {
   const element = document.querySelector(query)
   if(element === null) {
     throw new Error(`Tried to query element: "${query}. Not found"`)
@@ -39,6 +39,10 @@ class StartGamePanelInterface {
     this.activatePlayerNameInput()
     this.activateConnectRoomForm()
     this.activateCreateRoomForm()
+
+    queryElement<HTMLButtonElement>('#quit-online').addEventListener('click', () => {
+      this.togglePanelVisibility()
+    })
   }
 
   private activatePlayerNameInput(): void {
@@ -74,6 +78,10 @@ class StartGamePanelInterface {
 
   public setConnectInput(value: string): void {
     this.connectInput.value = value
+  }
+
+  public togglePanelVisibility(): void {
+    this.root.classList.toggle('invisible')
   }
 }
 

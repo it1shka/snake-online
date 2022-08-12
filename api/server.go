@@ -6,6 +6,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+const BOARD_SIZE = 20
+
 var rooms = NewSafeMap[string, *Room]()
 
 func SetupAPIServer(router *gin.RouterGroup) {

@@ -1,4 +1,8 @@
 .start-game-panel-wrapper {
+  position: fixed;
+  top: 0; bottom: 0; left: 0; right: 0;
+  background-color: #d6f9ff;
+  z-index: 99;
   height: 100vh;
   display: grid;
   place-items: center;
@@ -39,5 +43,30 @@
         color: white;
       }
     }
+  }
+}
+
+.start-game-panel-wrapper.invisible {
+  display: none;
+}
+
+#quit-online {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  padding: 0.5em 1em;
+  font-size: inherit;
+  background-color: #b84949;
+  color: white;
+  border: none;
+  border-radius: 15px;
+  box-shadow: transparent 0px 0px 3px;
+
+  transition: all 0.2s;
+  transition-property: background-color, box-shadow;
+
+  &:hover {
+    box-shadow: #682a2a 0px 0px 3px;
+    background-color: #682a2a;
   }
 }

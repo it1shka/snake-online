@@ -1,5 +1,6 @@
 import API from "./api.js"
 import StartGamePanelInterface from "./onlineinterface.js"
+import playOnline from "./onlinesnake.js"
 
 const CONNECTION_FAILED_MESSAGE = 
   `Failed to connect:
@@ -12,6 +13,8 @@ const startInterface = new StartGamePanelInterface({
     API.connectToRoom(roomId, name)
       .then(socket => {
         console.log('Successfully connected!')
+        startInterface.togglePanelVisibility()
+        playOnline(socket)
       })
       .catch(() => {
         alert(CONNECTION_FAILED_MESSAGE)

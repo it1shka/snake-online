@@ -12,6 +12,8 @@
   <base href=".">
   <script defer type="module" src="/assets/online.js"></script>
 
+  <a id="home-link" href="/"><img src="/assets/snake.png"></a>
+
   <div class="start-game-panel-wrapper">
     <div class="start-game-panel">
 
@@ -45,6 +47,15 @@
     </div>
   </div>
 
-  
+  <div class="visualizer-wrapper">
+    <div class="visualizer">
+      <canvas tabindex="1" id="canvas" width="600" height="600"></canvas>
+    </div>
+  </div>
+
+  <button id="quit-online">
+    Quit room!
+  </button>
+
 </body>
 </html>

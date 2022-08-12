@@ -7,7 +7,7 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-type Direction int
+type Direction byte
 
 const (
 	UP Direction = iota
@@ -20,11 +20,11 @@ type Position [2]int
 
 type Player struct {
 	sync.RWMutex
-	Conn      *websocket.Conn
-	Name      string
-	Direction Direction
-	Body      []Position
-	Alive     bool
+	Conn             *websocket.Conn
+	Name             string
+	Direction        Direction
+	Body             []Position
+	Alive, Invisible bool
 }
 
 func NewPlayer(conn *websocket.Conn, name string) *Player {
@@ -53,4 +53,13 @@ func NewRoom(id string, maxplayers int) *Room {
 		Players:          NewSafeMap[*websocket.Conn, *Player](),
 	}
 	return &room
+}
+
+// to send in json to client
+type PlayerContainer struct {
+	Name      string     `json:"name"`
+	Self      bool       `json:"self"`
+	Direction Direction  `json:"direction"`
+	Body      []Position `json:"body"`
+	Invisible bool       `json:"invisible"`
 }

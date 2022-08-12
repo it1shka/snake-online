@@ -1,17 +1,11 @@
+import { pairs } from "./utils.js"
+
 export type Position = [number, number]
 
 export interface Snake {
   body: Position[]
   headColor: string
   tailColor: string
-}
-
-function pairs<T>(arr: T[]): Array<[T, T]> {
-  const output = new Array(arr.length - 1)
-  for(let i = 0; i < arr.length - 1; i++) {
-    output[i] = [arr[i], arr[i + 1]]
-  }
-  return output
 }
 
 class Vizualizer {
@@ -28,8 +22,8 @@ class Vizualizer {
   }
 
   drawGrid() {
-    this.ctx.fillStyle = '#ccc'
-    this.ctx.strokeStyle = 'grey'
+    this.ctx.fillStyle = '#ffffff'
+    this.ctx.strokeStyle = '#f1f1f1'
     for(let row = 0; row < this.boardSize; row++) {
       for(let column = 0; column < this.boardSize; column++) {
         const [x, y] = [this.cellSize * row, this.cellSize * column]
@@ -42,7 +36,7 @@ class Vizualizer {
   drawFood([row, column]: Position) {
     const [x, y] = [this.cellSize * row + this.offset, this.cellSize * column + this.offset]
     const size = this.cellSize - 2 * this.offset
-    this.ctx.fillStyle = '#4ceb34'
+    this.ctx.fillStyle = '#00ff88'
     this.ctx.fillRect(x, y, size, size)
   }
 
