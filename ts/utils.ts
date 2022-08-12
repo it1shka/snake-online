@@ -54,3 +54,12 @@ export function choose<T>(arr: T[]) {
   const item = arr[index]
   return item
 }
+
+export function divide<T>(arr: T[], div: (element: T) => boolean): [T[], T[]] {
+  const output: [T[], T[]] = [[], []]
+  for(const each of arr) {
+    const k = Number(div(each))
+    output[k].push(each)
+  }
+  return output
+}

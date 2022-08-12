@@ -1,6 +1,7 @@
 import { Direction, DirectionCode, DirectionToCodeMap, subscribeToInput } from "./input.js";
 import { queryElement } from "./onlineinterface.js";
-import Vizualizer, { Position } from "./visualizer.js";
+import { divide } from "./utils.js";
+import Vizualizer, { Position, Snake } from "./visualizer.js";
 
 interface Player {
   name: string
@@ -15,9 +16,34 @@ interface GameState {
   snakes: Player[]
 }
 
+function SelfSnake({body}: Player): Snake {
+  return {
+    body, 
+    headColor: 'orange',
+    tailColor: 'red'
+  }
+}
+
+function EnemySnake({body}: Player): Snake {
+  return {
+    body,
+    headColor: 'lightblue',
+    tailColor: 'darkblue',
+  }
+}
+
+function InvisibleSnake({body}: Player): Snake {
+  return {
+    body, 
+    headColor: '#eb347a',
+    tailColor: '#eb347a'
+  }
+}
+
 class OnlineSnakeManager {
-  private state!: GameState
+
   private unsubFromInput: () => void
+  private lastDirection: DirectionCode | undefined
 
   constructor(
     private readonly socket: WebSocket,
@@ -32,17 +58,22 @@ class OnlineSnakeManager {
 
   private receiveUpdate(event: MessageEvent<any>) {
     const state = JSON.parse(event.data) as GameState
-    this.state = state
 
     this.visualizer.drawGrid()
 
-    for(const snake of state.snakes) {
-      this.visualizer.drawSnake({
-        body: snake.body,
-        headColor: 'grey',
-        tailColor: 'black',
-      })
+    const [oldSnakes, newSnakes] = divide(state.snakes, ({invisible}) => invisible)
+
+    for(const snake of oldSnakes) {
+      let drawable: Snake
+      if(snake.self) drawable = SelfSnake(snake)
+      else drawable = EnemySnake(snake)
+      this.visualizer.drawSnake(drawable)
     }
+
+    for(const snake of newSnakes) {
+      this.visualizer.drawSnake(InvisibleSnake(snake))
+    }
+
 
     this.visualizer.drawFood(state.food)
   }
