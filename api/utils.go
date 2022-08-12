@@ -122,13 +122,13 @@ func nextPosition(head Position, dir Direction) Position {
 	row, col := head[0], head[1]
 	switch dir {
 	case UP:
-		row--
-	case RIGHT:
-		col++
-	case DOWN:
-		row++
-	case LEFT:
 		col--
+	case RIGHT:
+		row++
+	case DOWN:
+		col++
+	case LEFT:
+		row--
 	}
 	return Position{row, col}
 }
