@@ -1,19 +1,8 @@
-export enum Direction {
-  Up    = 'Up',
-  Right = 'Right',
-  Down  = 'Down',
-  Left  = 'Left'
-}
-
-export const enum DirectionCode {
-  Up = 0, Right = 1, Down = 2, Left = 3
-}
-
-export const DirectionToCodeMap: {[d in Direction]: DirectionCode} = {
-  Up: DirectionCode.Up,
-  Right: DirectionCode.Right,
-  Down: DirectionCode.Down,
-  Left: DirectionCode.Left,
+export const enum Direction {
+  Up    = 0,
+  Right = 1,
+  Down  = 2,
+  Left  = 3
 }
 
 const KeyMap: {[key: string]: Direction} = Object.freeze({

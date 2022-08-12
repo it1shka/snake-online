@@ -1,4 +1,4 @@
-import { Direction, DirectionCode, DirectionToCodeMap, subscribeToInput } from "./input.js";
+import { Direction, Opposite, subscribeToInput } from "./input.js";
 import { queryElement } from "./onlineinterface.js";
 import { divide } from "./utils.js";
 import Vizualizer, { Position, Snake } from "./visualizer.js";
@@ -6,7 +6,7 @@ import Vizualizer, { Position, Snake } from "./visualizer.js";
 interface Player {
   name: string
   self: boolean
-  direction: DirectionCode
+  direction: Direction
   body: Position[]
   invisible: boolean
 }
@@ -43,7 +43,7 @@ function InvisibleSnake({body}: Player): Snake {
 class OnlineSnakeManager {
 
   private unsubFromInput: () => void
-  private lastDirection: DirectionCode | undefined
+  private selfPlayer: Player | undefined
 
   constructor(
     private readonly socket: WebSocket,
@@ -58,6 +58,8 @@ class OnlineSnakeManager {
 
   private receiveUpdate(event: MessageEvent<any>) {
     const state = JSON.parse(event.data) as GameState
+
+    this.selfPlayer = state.snakes.find(({self}) => self)
 
     this.visualizer.drawGrid()
 
@@ -74,14 +76,16 @@ class OnlineSnakeManager {
       this.visualizer.drawSnake(InvisibleSnake(snake))
     }
 
-
     this.visualizer.drawFood(state.food)
   }
 
   private responceToInput(direction: Direction) {
-      const dirCode = DirectionToCodeMap[direction]
-      const data = new Uint8Array([ dirCode ])
-      this.socket.send(data)
+    if((this.selfPlayer?.body.length ?? 0) > 1 && (
+      this.selfPlayer?.direction === direction ||
+      this.selfPlayer?.direction === Opposite[direction]
+    )) return
+    const data = new Uint8Array([ direction ])
+    this.socket.send(data)
   }
 
   public cleanup() {
