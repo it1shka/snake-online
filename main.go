@@ -3,7 +3,6 @@ package main
 import (
 	"os"
 
-	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"it1shka.com/snake-online/api"
 )
@@ -22,7 +21,6 @@ func setupFrontend(router *gin.RouterGroup) {
 
 func main() {
 	router := gin.Default()
-	router.Use(cors.Default())
 
 	frontendGroup := router.Group("/")
 	setupFrontend(frontendGroup)

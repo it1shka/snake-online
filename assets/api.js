@@ -31,4 +31,5 @@ class ApiInterface {
         return resolveSocket(connection);
     }
 }
-export default new ApiInterface('http://localhost:3000');
+const apiSource = window.location.protocol + '//' + window.location.host;
+export default new ApiInterface(apiSource);
