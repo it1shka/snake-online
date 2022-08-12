@@ -1,12 +1,7 @@
 import { Direction, Opposite, subscribeToInput } from "./input.js";
 import RecordManager from "./recordmanager.js";
+import { choose } from "./utils.js";
 import { Position, Snake } from "./visualizer.js";
-
-function choose<T>(arr: T[]) {
-  const index = Math.floor(Math.random() * arr.length)
-  const item = arr[index]
-  return item
-}
 
 export default class OfflineSnake implements Snake {
 

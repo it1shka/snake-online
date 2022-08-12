@@ -42,6 +42,9 @@ type Room struct {
 	MaxPlayers, CurrentPlayers int
 	LastActivityTime           time.Time
 	Players                    *SafeMap[*websocket.Conn, *Player]
+
+	ShouldUpdateFood bool
+	Food             Position
 }
 
 func NewRoom(id string, maxplayers int) *Room {
@@ -62,4 +65,9 @@ type PlayerContainer struct {
 	Direction Direction  `json:"direction"`
 	Body      []Position `json:"body"`
 	Invisible bool       `json:"invisible"`
+}
+
+type RoomContainer struct {
+	Food   Position          `json:"food"`
+	Snakes []PlayerContainer `json:"snakes"`
 }

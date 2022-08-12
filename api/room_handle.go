@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/gorilla/websocket"
 	"github.com/rs/xid"
 )
 
@@ -56,24 +57,84 @@ func roomUpdateLoop(roomId string) {
 func updateRoom(room *Room) {
 	room.Lock()
 	defer room.Unlock()
+
+	if room.ShouldUpdateFood {
+		room.Food = GenerateFood()
+		room.ShouldUpdateFood = false
+	}
+
 	playersSM := room.Players
 
-	// UPDATE THE ROOM -- MAIN LOGIC GOES HERE
 	playersSM.RLock()
 	defer playersSM.RUnlock()
 
-	// sending current players state
-	for conn := range playersSM.Map {
-		players := MapValues(playersSM.Map)
+	broadcastRoomToPlayers(playersSM.Map, room)
+	updatePlayers(playersSM.Map, room)
+}
+
+// sending room state to all players in room
+func broadcastRoomToPlayers(Map map[*websocket.Conn]*Player, room *Room) {
+	for conn := range Map {
+		players := MapValues(Map)
 		active := FilterFn(players, func(p *Player) bool {
 			return p.Alive
 		})
 		containers := MapFn(active, func(p *Player) PlayerContainer {
 			return PreparePlayerContainer(p, conn)
 		})
-		conn.WriteJSON(containers)
+		json := RoomContainer{
+			Food:   room.Food,
+			Snakes: containers,
+		}
+		conn.WriteJSON(json)
+	}
+}
+
+// updating players
+func updatePlayers(Map map[*websocket.Conn]*Player, room *Room) {
+
+	// moving
+	var collisions [BOARD_SIZE][BOARD_SIZE]int
+	for _, player := range Map {
+		if !player.Alive {
+			continue
+		}
+		player.Lock()
+
+		head := last(player.Body)
+		next := nextPosition(head, player.Direction)
+		if next == room.Food {
+			player.Body = append(player.Body, next)
+			room.ShouldUpdateFood = true
+		} else {
+			player.Body = append(player.Body[1:], next)
+		}
+
+		for _, pos := range player.Body {
+			if !posValid(pos) {
+				continue
+			}
+			row, col := pos[0], pos[1]
+			collisions[row][col]++
+		}
+
+		player.Unlock()
 	}
 
-	// updating room
+	// checking for collisions
+	for _, player := range Map {
+		if !player.Alive {
+			continue
+		}
+
+		player.Lock()
+		head := player.Body[len(player.Body)-1]
+		if !posValid(head) {
+			player.Alive = false
+		} else if !player.Invisible && collisions[head[0]][head[1]] > 1 {
+			player.Alive = false
+		}
+		player.Unlock()
+	}
 
 }

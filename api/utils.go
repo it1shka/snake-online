@@ -1,6 +1,7 @@
 package api
 
 import (
+	"math/rand"
 	"sync"
 	"time"
 
@@ -100,4 +101,34 @@ func MapValues[K comparable, V any](mapp map[K]V) []V {
 		index++
 	}
 	return values
+}
+
+func GenerateFood() Position {
+	row := rand.Intn(BOARD_SIZE)
+	col := rand.Intn(BOARD_SIZE)
+	return Position{row, col}
+}
+
+func posValid(pos Position) bool {
+	row, col := pos[0], pos[1]
+	return row >= 0 && row < BOARD_SIZE && col >= 0 && col < BOARD_SIZE
+}
+
+func last[T any](array []T) T {
+	return array[len(array)-1]
+}
+
+func nextPosition(head Position, dir Direction) Position {
+	row, col := head[0], head[1]
+	switch dir {
+	case UP:
+		row--
+	case RIGHT:
+		col++
+	case DOWN:
+		row++
+	case LEFT:
+		col--
+	}
+	return Position{row, col}
 }

@@ -48,3 +48,9 @@ export function pairs<T>(arr: T[]): Array<[T, T]> {
   }
   return output
 }
+
+export function choose<T>(arr: T[]) {
+  const index = Math.floor(Math.random() * arr.length)
+  const item = arr[index]
+  return item
+}
