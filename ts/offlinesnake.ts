@@ -15,13 +15,11 @@ export default class OfflineSnake implements Snake {
   private lastDirection = Direction.Up
 
   private boardSize: number
-  private listener: (event: KeyboardEvent) => void
-  private bindedTo: HTMLElement
+  private unsubscribeFromInput: () => void
 
   constructor(boardSize: number, inpBind: HTMLElement) {
-    const listener = subscribeToInput(inpBind, this.onDirectionChange.bind(this))
-    this.listener = listener
-    this.bindedTo = inpBind
+    const unsub = subscribeToInput(inpBind, this.onDirectionChange.bind(this))
+    this.unsubscribeFromInput = unsub
 
     this.boardSize = boardSize
     const middle = ~~(boardSize / 2)
@@ -31,10 +29,9 @@ export default class OfflineSnake implements Snake {
 
   private onDirectionChange(direction: Direction) {
     if(this.body.length > 1 && direction === Opposite[this.lastDirection]) {
-      return false
+      return
     }
     this.direction = direction
-    return true
   }
 
   private bodyContains([row, column]: Position) {
@@ -100,7 +97,7 @@ export default class OfflineSnake implements Snake {
 
   public cleanup(): void {
     RecordManager.instance.reload()
-    this.bindedTo.removeEventListener('keydown', this.listener)
+    this.unsubscribeFromInput()
   }
 
 }

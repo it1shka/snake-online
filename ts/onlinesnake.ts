@@ -3,13 +3,6 @@ import { queryElement } from "./onlineinterface.js";
 import Vizualizer from "./visualizer.js";
 
 export default function playOnline(socket: WebSocket) {
-  // ability to quit room
-  const quitButton = queryElement<HTMLButtonElement>('#quit-online')
-  const quitHandler = () => {
-    socket.close()
-    quitButton.removeEventListener('click', quitHandler)
-  }
-  quitButton.addEventListener('click', quitHandler)
 
   // initializing vizualizer
   const canvas = document.querySelector('canvas')!
@@ -17,7 +10,7 @@ export default function playOnline(socket: WebSocket) {
   const vizualizer = new Vizualizer(canvas, BOARD_SIZE)
 
   // input manager
-  subscribeToInput(document.body, direction => {
+  const inputUnsub = subscribeToInput(document.body, direction => {
     const dirCode = DirectionToCodeMap[direction]
     const data = new Uint8Array([ dirCode ])
     socket.send(data)
@@ -27,5 +20,14 @@ export default function playOnline(socket: WebSocket) {
   socket.onmessage = event => {
     console.log(event.data)
   }
+
+  // ability to quit room
+  const quitButton = queryElement<HTMLButtonElement>('#quit-online')
+  const quitHandler = () => {
+    socket.close()
+    inputUnsub()
+    quitButton.removeEventListener('click', quitHandler)
+  }
+  quitButton.addEventListener('click', quitHandler)
 
 }

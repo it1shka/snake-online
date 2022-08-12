@@ -37,23 +37,21 @@ export const Opposite: {[direction in Direction]: Direction} = Object.freeze({
   [Direction.Left ]: Direction.Right,
 })
 
-type DirChangeHandler = (direction: Direction) => boolean
-
-export const subscribeToInput = (element: HTMLElement, onchange: DirChangeHandler) => {
-  let last: Direction | null = null
+type DirectionUpdate = (direction: Direction) => void
+export const subscribeToInput = (element: HTMLElement, update: DirectionUpdate) => {
 
   const listener = (event: KeyboardEvent) => {
+
     const key = event.key.toLowerCase()
     if(!(key in KeyMap)) return
 
     const direction = KeyMap[key]
-    if(direction == last) return
+    update(direction)
 
-    const shouldUpdate = onchange(direction)
-    if(shouldUpdate) last = direction
   }
 
   element.addEventListener('keydown', listener)
-
-  return listener
+  return () => {
+    element.removeEventListener('keydown', listener)
+  }
 }
