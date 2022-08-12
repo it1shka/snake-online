@@ -22,6 +22,7 @@ func setupFrontend(router *gin.RouterGroup) {
 
 func main() {
 	router := gin.Default()
+	router.Use(cors.Default())
 
 	frontendGroup := router.Group("/")
 	setupFrontend(frontendGroup)
@@ -29,7 +30,6 @@ func main() {
 	router.Static("/assets", "./assets")
 
 	apiGroup := router.Group("/api")
-	apiGroup.Use(cors.Default())
 	api.SetupAPIServer(apiGroup)
 
 	PORT := os.Getenv("PORT")
